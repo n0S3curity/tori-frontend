@@ -490,4 +490,22 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get anyProvider => 'כל נותן שירות פנוי';
+
+  @override
+  String get logoutConfirm => 'האם אתה בטוח שברצונך להתנתק?';
+
+  @override
+  String get manageClients => 'נהל את הלקוחות שלך';
+
+  @override
+  String get manageProviders => 'צפה ונהל את הצוות שלך';
+
+  @override
+  String get manageBusinessSettings => 'ערוך שם, לוגו ותזכורות';
+
+  @override
+  String get completedLabel => 'הושלם';
+
+  @override
+  String get canceledLabel => 'בוטל';
 }

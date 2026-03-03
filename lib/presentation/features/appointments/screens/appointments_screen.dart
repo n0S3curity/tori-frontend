@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/context_extensions.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../domain/entities/appointment_entity.dart';
 import '../../../common/widgets/app_error_widget.dart';
@@ -109,6 +110,36 @@ class _AppointmentCard extends ConsumerWidget {
                       const SizedBox(width: 6),
                       Text(appointment.clientName, style: context.textTheme.bodySmall),
                     ],
+                  ),
+                ],
+                if (appointment.spName.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.badge_outlined, size: 14),
+                      const SizedBox(width: 6),
+                      Text(appointment.spName, style: context.textTheme.bodySmall),
+                    ],
+                  ),
+                ],
+                if (appointment.servicePrice != null) ...[
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.successLight,
+                        borderRadius: BorderRadius.circular(9999),
+                      ),
+                      child: Text(
+                        AppFormatters.formatCurrency(appointment.servicePrice!),
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: AppColors.successDark,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
                 if (!appointment.isCanceled && appointment.isUpcoming) ...[

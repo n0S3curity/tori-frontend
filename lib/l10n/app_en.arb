@@ -169,5 +169,11 @@
   "noServiceProviders": "No service providers yet",
   "noClients": "No clients yet",
   "spSpecialty": "Specialty",
-  "anyProvider": "Any available provider"
+  "anyProvider": "Any available provider",
+  "logoutConfirm": "Are you sure you want to log out?",
+  "manageClients": "Manage your clients",
+  "manageProviders": "View and manage your team",
+  "manageBusinessSettings": "Edit name, logo and reminders",
+  "completedLabel": "Completed",
+  "canceledLabel": "Canceled"
 }

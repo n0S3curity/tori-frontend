@@ -491,4 +491,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get anyProvider => 'Any available provider';
+
+  @override
+  String get logoutConfirm => 'Are you sure you want to log out?';
+
+  @override
+  String get manageClients => 'Manage your clients';
+
+  @override
+  String get manageProviders => 'View and manage your team';
+
+  @override
+  String get manageBusinessSettings => 'Edit name, logo and reminders';
+
+  @override
+  String get completedLabel => 'Completed';
+
+  @override
+  String get canceledLabel => 'Canceled';
 }

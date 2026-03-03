@@ -19,10 +19,13 @@ class StatsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
     final period = ref.watch(selectedPeriodProvider);
+    final selectedDate = ref.watch(selectedStatsDateProvider);
     if (user == null) return const AppLoading();
 
+    final dateStr =
+        '${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}';
     final isBO = user.isBusinessOwner || user.isCompanyOwner;
-    final params = StatsParams(id: user.id, period: period, isBusinessStats: isBO);
+    final params = StatsParams(id: user.id, period: period, isBusinessStats: isBO, date: dateStr);
     final statsAsync = ref.watch(statsProvider(params));
 
     return Scaffold(
@@ -34,12 +37,30 @@ class StatsScreen extends ConsumerWidget {
               )
             : null,
         title: Text(context.l10n.stats),
+        actions: [
+          // Date picker button
+          Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: TextButton.icon(
+              onPressed: () => _pickDate(context, ref, selectedDate),
+              icon: const Icon(Icons.calendar_month_rounded, size: 18),
+              label: Text(
+                '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.primary,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [
-          // Period selector
+          // Period selector — compact row
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
             child: SegmentedButton<String>(
               segments: [
                 ButtonSegment(value: 'daily', label: Text(context.l10n.daily)),
@@ -64,6 +85,24 @@ class StatsScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _pickDate(BuildContext context, WidgetRef ref, DateTime current) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: current,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+      builder: (ctx, child) => Theme(
+        data: Theme.of(ctx).copyWith(
+          colorScheme: Theme.of(ctx).colorScheme.copyWith(primary: AppColors.primary),
+        ),
+        child: child!,
+      ),
+    );
+    if (picked != null) {
+      ref.read(selectedStatsDateProvider.notifier).state = picked;
+    }
   }
 }
 
@@ -144,7 +183,7 @@ class _StatsContent extends StatelessWidget {
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: (v, _) => Text(
-                          v == 0 ? 'Completed' : 'Canceled',
+                          v == 0 ? context.l10n.completedLabel : context.l10n.canceledLabel,
                           style: const TextStyle(fontSize: 10),
                         ),
                       ),

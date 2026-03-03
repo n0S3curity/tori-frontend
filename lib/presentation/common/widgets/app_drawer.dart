@@ -7,7 +7,11 @@ import '../../../core/theme/app_colors.dart';
 import '../../features/auth/providers/auth_provider.dart';
 
 class AppDrawer extends ConsumerWidget {
-  const AppDrawer({super.key});
+  const AppDrawer({super.key, this.activeRoute});
+
+  /// The route of the currently active tab (e.g. '/home', '/services').
+  /// Used to highlight the matching nav item in amber.
+  final String? activeRoute;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,7 +25,7 @@ class AppDrawer extends ConsumerWidget {
       child: SafeArea(
         child: Column(
           children: [
-            // ── Header ──────────────────────────────────────────────────────
+            // ── Header with amber gradient ───────────────────────────────
             _DrawerHeader(user: user),
             const Divider(height: 1),
 
@@ -35,6 +39,7 @@ class AppDrawer extends ConsumerWidget {
                       icon: item.icon,
                       label: item.label(context),
                       route: item.route,
+                      isActive: activeRoute == item.route,
                     ),
                   ),
 
@@ -46,12 +51,14 @@ class AppDrawer extends ConsumerWidget {
                       icon: Icons.qr_code_rounded,
                       label: context.l10n.inviteClient,
                       route: '/qr-invite',
+                      isActive: false,
                     ),
                   if (role == AppRoles.businessOwner)
                     _DrawerNavTile(
                       icon: Icons.qr_code_rounded,
                       label: context.l10n.inviteMembers,
                       route: '/qr-invite',
+                      isActive: false,
                     ),
 
                   const Divider(height: 24, indent: 20, endIndent: 20),
@@ -154,7 +161,7 @@ class AppDrawer extends ConsumerWidget {
     Navigator.of(context).pop();
     final confirmed = await context.showConfirmDialog(
       title: context.l10n.logout,
-      body: 'Are you sure you want to log out?',
+      body: context.l10n.logoutConfirm,
       isDestructive: true,
     );
     if (confirmed == true) {
@@ -175,6 +182,16 @@ class _DrawerHeader extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.primary.withOpacity(0.12),
+            AppColors.primary.withOpacity(0.04),
+          ],
+        ),
+      ),
       child: Row(
         children: [
           // Avatar
@@ -259,28 +276,38 @@ class _DrawerNavTile extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.route,
+    required this.isActive,
   });
 
   final IconData icon;
   final String label;
   final String route;
+  final bool isActive;
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(icon, color: AppColors.textPrimary, size: 22),
-      title: Text(
-        label,
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w500,
-            ),
+    final color = isActive ? AppColors.primary : AppColors.textPrimary;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: isActive ? AppColors.primary.withOpacity(0.10) : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
       ),
-      trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textHint, size: 20),
-      onTap: () {
-        Navigator.of(context).pop(); // close drawer
-        context.go(route);
-      },
+      child: ListTile(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        leading: Icon(icon, color: color, size: 22),
+        title: Text(
+          label,
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: color,
+                fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+              ),
+        ),
+        onTap: () {
+          Navigator.of(context).pop(); // close drawer
+          context.go(route);
+        },
+      ),
     );
   }
 }

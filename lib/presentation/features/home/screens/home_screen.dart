@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../common/widgets/app_drawer.dart';
 import '../../appointments/screens/appointments_screen.dart';
@@ -23,40 +24,46 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentIndex = 0;
 
-  List<_TabConfig> _buildTabs(String role) {
+  List<_TabConfig> _buildTabs(BuildContext context, String role) {
+    final l10n = context.l10n;
     final all = [
       _TabConfig(
         icon: Icons.calendar_today_outlined,
         activeIcon: Icons.calendar_today_rounded,
-        label: 'Appointments',
+        label: l10n.appointments,
+        route: '/home',
         screen: AppointmentsScreen(scaffoldKey: role != AppRoles.client ? homeScaffoldKey : null),
         roles: [AppRoles.client, AppRoles.serviceProvider, AppRoles.businessOwner, AppRoles.companyOwner],
       ),
       _TabConfig(
         icon: Icons.design_services_outlined,
         activeIcon: Icons.design_services_rounded,
-        label: 'Services',
+        label: l10n.services,
+        route: '/services',
         screen: ServicesScreen(scaffoldKey: homeScaffoldKey),
         roles: [AppRoles.serviceProvider, AppRoles.businessOwner],
       ),
       _TabConfig(
         icon: Icons.bar_chart_outlined,
         activeIcon: Icons.bar_chart_rounded,
-        label: 'Stats',
+        label: l10n.stats,
+        route: '/stats',
         screen: StatsScreen(scaffoldKey: homeScaffoldKey),
         roles: [AppRoles.serviceProvider, AppRoles.businessOwner, AppRoles.companyOwner],
       ),
       _TabConfig(
         icon: Icons.business_outlined,
         activeIcon: Icons.business_rounded,
-        label: 'Business',
+        label: l10n.business,
+        route: '/business',
         screen: BusinessScreen(scaffoldKey: homeScaffoldKey),
         roles: [AppRoles.businessOwner, AppRoles.companyOwner],
       ),
       _TabConfig(
         icon: Icons.person_outline_rounded,
         activeIcon: Icons.person_rounded,
-        label: 'Profile',
+        label: l10n.profile,
+        route: '/profile',
         screen: ProfileScreen(scaffoldKey: role != AppRoles.client ? homeScaffoldKey : null),
         roles: [AppRoles.client, AppRoles.serviceProvider, AppRoles.businessOwner, AppRoles.companyOwner],
       ),
@@ -67,7 +74,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final role = ref.watch(userRoleProvider) ?? AppRoles.client;
-    final tabs = _buildTabs(role);
+    final tabs = _buildTabs(context, role);
     final safeIndex = _currentIndex.clamp(0, tabs.length - 1);
 
     // SP, BO, CO get a sidebar drawer; clients use only bottom nav
@@ -75,7 +82,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       key: homeScaffoldKey,
-      drawer: showDrawer ? const AppDrawer() : null,
+      drawer: showDrawer ? AppDrawer(activeRoute: tabs[safeIndex].route) : null,
       body: tabs[safeIndex].screen,
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
@@ -109,6 +116,7 @@ class _TabConfig {
     required this.icon,
     required this.activeIcon,
     required this.label,
+    required this.route,
     required this.screen,
     required this.roles,
   });
@@ -116,6 +124,7 @@ class _TabConfig {
   final IconData icon;
   final IconData activeIcon;
   final String label;
+  final String route;
   final Widget screen;
   final List<String> roles;
 }

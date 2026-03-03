@@ -169,5 +169,11 @@
   "noServiceProviders": "אין נותני שירות עדיין",
   "noClients": "אין לקוחות עדיין",
   "spSpecialty": "התמחות",
-  "anyProvider": "כל נותן שירות פנוי"
+  "anyProvider": "כל נותן שירות פנוי",
+  "logoutConfirm": "האם אתה בטוח שברצונך להתנתק?",
+  "manageClients": "נהל את הלקוחות שלך",
+  "manageProviders": "צפה ונהל את הצוות שלך",
+  "manageBusinessSettings": "ערוך שם, לוגו ותזכורות",
+  "completedLabel": "הושלם",
+  "canceledLabel": "בוטל"
 }

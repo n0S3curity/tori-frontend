@@ -97,19 +97,24 @@ class _OwnerBusinessPanel extends ConsumerWidget {
             const SizedBox(height: 16),
 
             // Actions
-            _ActionTile(
+            _MenuCard(
               icon: Icons.people_outline,
-              label: context.l10n.clients,
+              title: context.l10n.clients,
+              subtitle: context.l10n.manageClients,
               onTap: () => context.push('/business/clients/${business.id}'),
             ),
-            _ActionTile(
+            const SizedBox(height: 8),
+            _MenuCard(
               icon: Icons.engineering_outlined,
-              label: context.l10n.serviceProviders,
+              title: context.l10n.serviceProviders,
+              subtitle: context.l10n.manageProviders,
               onTap: () => context.push('/business/service-providers'),
             ),
-            _ActionTile(
+            const SizedBox(height: 8),
+            _MenuCard(
               icon: Icons.settings_outlined,
-              label: context.l10n.businessSettings,
+              title: context.l10n.businessSettings,
+              subtitle: context.l10n.manageBusinessSettings,
               onTap: () => context.push('/business/settings'),
             ),
           ],
@@ -171,24 +176,59 @@ class _AdminBusinessList extends ConsumerWidget {
   }
 }
 
-class _ActionTile extends StatelessWidget {
-  const _ActionTile({
+class _MenuCard extends StatelessWidget {
+  const _MenuCard({
     required this.icon,
-    required this.label,
+    required this.title,
+    required this.subtitle,
     required this.onTap,
   });
 
   final IconData icon;
-  final String label;
+  final String title;
+  final String subtitle;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) => Card(
-        child: ListTile(
-          leading: Icon(icon, color: AppColors.primary),
-          title: Text(label),
-          trailing: const Icon(Icons.chevron_right),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
           onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                // Amber icon container
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: AppColors.primary, size: 24),
+                ),
+                const SizedBox(width: 16),
+                // Title + description
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: context.textTheme.titleMedium),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.chevron_right, color: AppColors.textHint),
+              ],
+            ),
+          ),
         ),
       );
 }

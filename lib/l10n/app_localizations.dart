@@ -1051,6 +1051,42 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'כל נותן שירות פנוי'**
   String get anyProvider;
+
+  /// No description provided for @logoutConfirm.
+  ///
+  /// In he, this message translates to:
+  /// **'האם אתה בטוח שברצונך להתנתק?'**
+  String get logoutConfirm;
+
+  /// No description provided for @manageClients.
+  ///
+  /// In he, this message translates to:
+  /// **'נהל את הלקוחות שלך'**
+  String get manageClients;
+
+  /// No description provided for @manageProviders.
+  ///
+  /// In he, this message translates to:
+  /// **'צפה ונהל את הצוות שלך'**
+  String get manageProviders;
+
+  /// No description provided for @manageBusinessSettings.
+  ///
+  /// In he, this message translates to:
+  /// **'ערוך שם, לוגו ותזכורות'**
+  String get manageBusinessSettings;
+
+  /// No description provided for @completedLabel.
+  ///
+  /// In he, this message translates to:
+  /// **'הושלם'**
+  String get completedLabel;
+
+  /// No description provided for @canceledLabel.
+  ///
+  /// In he, this message translates to:
+  /// **'בוטל'**
+  String get canceledLabel;
 }
 
 class _AppLocalizationsDelegate
