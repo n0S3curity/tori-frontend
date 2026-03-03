@@ -16,6 +16,8 @@ import 'presentation/features/home/screens/home_screen.dart';
 import 'presentation/features/services/screens/services_screen.dart';
 import 'presentation/features/stats/screens/stats_screen.dart';
 import 'presentation/features/business/screens/business_screen.dart';
+import 'presentation/features/business/screens/clients_screen.dart';
+import 'presentation/features/appointments/screens/appointment_detail_screen.dart';
 import 'presentation/features/profile/screens/profile_screen.dart';
 
 // ---------------------------------------------------------------------------
@@ -85,8 +87,8 @@ final _routerProvider = Provider<GoRouter>((ref) {
               ),
               GoRoute(
                 path: ':appointmentId',
-                builder: (_, state) => _AppointmentDetailPlaceholder(
-                  id: state.pathParameters['appointmentId']!,
+                builder: (_, state) => AppointmentDetailScreen(
+                  appointmentId: state.pathParameters['appointmentId']!,
                 ),
               ),
             ],
@@ -109,8 +111,10 @@ final _routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: '/stats', builder: (_, __) => const StatsScreen()),
           GoRoute(path: '/business', builder: (_, __) => const BusinessScreen()),
           GoRoute(
-            path: '/business/clients',
-            builder: (_, __) => const _ComingSoon(title: 'Clients'),
+            path: '/business/clients/:businessId',
+            builder: (_, state) => ClientsScreen(
+              businessId: state.pathParameters['businessId']!,
+            ),
           ),
           GoRoute(
             path: '/business/service-providers',
@@ -201,17 +205,6 @@ class _SplashScreenState extends ConsumerState<_SplashScreen> {
       body: Center(child: CircularProgressIndicator()),
     );
   }
-}
-
-class _AppointmentDetailPlaceholder extends StatelessWidget {
-  const _AppointmentDetailPlaceholder({required this.id});
-  final String id;
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Appointment Details')),
-        body: Center(child: Text('Appointment $id')),
-      );
 }
 
 class _ComingSoon extends StatelessWidget {

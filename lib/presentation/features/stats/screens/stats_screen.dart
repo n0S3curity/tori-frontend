@@ -11,7 +11,9 @@ import '../../../features/auth/providers/auth_provider.dart';
 import '../providers/stats_provider.dart';
 
 class StatsScreen extends ConsumerWidget {
-  const StatsScreen({super.key});
+  const StatsScreen({super.key, this.scaffoldKey});
+
+  final GlobalKey<ScaffoldState>? scaffoldKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,7 +26,15 @@ class StatsScreen extends ConsumerWidget {
     final statsAsync = ref.watch(statsProvider(params));
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.stats)),
+      appBar: AppBar(
+        leading: scaffoldKey != null
+            ? IconButton(
+                icon: const Icon(Icons.menu_rounded),
+                onPressed: () => scaffoldKey!.currentState?.openDrawer(),
+              )
+            : null,
+        title: Text(context.l10n.stats),
+      ),
       body: Column(
         children: [
           // Period selector

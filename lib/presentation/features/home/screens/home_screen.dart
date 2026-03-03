@@ -10,6 +10,9 @@ import '../../services/screens/services_screen.dart';
 import '../../stats/screens/stats_screen.dart';
 import '../../auth/providers/auth_provider.dart';
 
+/// A key shared with tab screens so they can open the HomeScreen's drawer.
+final homeScaffoldKey = GlobalKey<ScaffoldState>();
+
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -26,35 +29,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         icon: Icons.calendar_today_outlined,
         activeIcon: Icons.calendar_today_rounded,
         label: 'Appointments',
-        screen: const AppointmentsScreen(),
+        screen: AppointmentsScreen(scaffoldKey: role != AppRoles.client ? homeScaffoldKey : null),
         roles: [AppRoles.client, AppRoles.serviceProvider, AppRoles.businessOwner, AppRoles.companyOwner],
       ),
       _TabConfig(
         icon: Icons.design_services_outlined,
         activeIcon: Icons.design_services_rounded,
         label: 'Services',
-        screen: const ServicesScreen(),
+        screen: ServicesScreen(scaffoldKey: homeScaffoldKey),
         roles: [AppRoles.serviceProvider, AppRoles.businessOwner],
       ),
       _TabConfig(
         icon: Icons.bar_chart_outlined,
         activeIcon: Icons.bar_chart_rounded,
         label: 'Stats',
-        screen: const StatsScreen(),
+        screen: StatsScreen(scaffoldKey: homeScaffoldKey),
         roles: [AppRoles.serviceProvider, AppRoles.businessOwner, AppRoles.companyOwner],
       ),
       _TabConfig(
         icon: Icons.business_outlined,
         activeIcon: Icons.business_rounded,
         label: 'Business',
-        screen: const BusinessScreen(),
+        screen: BusinessScreen(scaffoldKey: homeScaffoldKey),
         roles: [AppRoles.businessOwner, AppRoles.companyOwner],
       ),
       _TabConfig(
         icon: Icons.person_outline_rounded,
         activeIcon: Icons.person_rounded,
         label: 'Profile',
-        screen: const ProfileScreen(),
+        screen: ProfileScreen(scaffoldKey: role != AppRoles.client ? homeScaffoldKey : null),
         roles: [AppRoles.client, AppRoles.serviceProvider, AppRoles.businessOwner, AppRoles.companyOwner],
       ),
     ];
@@ -71,6 +74,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final showDrawer = role != AppRoles.client;
 
     return Scaffold(
+      key: homeScaffoldKey,
       drawer: showDrawer ? const AppDrawer() : null,
       body: tabs[safeIndex].screen,
       bottomNavigationBar: Container(

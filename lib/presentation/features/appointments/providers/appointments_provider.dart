@@ -54,6 +54,17 @@ final appointmentsProvider =
 );
 
 // ---------------------------------------------------------------------------
+// Single appointment detail
+// ---------------------------------------------------------------------------
+
+final appointmentDetailProvider =
+    FutureProvider.family<AppointmentEntity, String>((ref, id) async {
+  final repo = ref.read(appointmentsRepositoryProvider);
+  final result = await repo.getAppointment(id);
+  return result.fold((f) => throw f, (a) => a);
+});
+
+// ---------------------------------------------------------------------------
 // Appointment booking state
 // ---------------------------------------------------------------------------
 

@@ -5,7 +5,9 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../features/auth/providers/auth_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({super.key, this.scaffoldKey});
+
+  final GlobalKey<ScaffoldState>? scaffoldKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -15,7 +17,15 @@ class ProfileScreen extends ConsumerWidget {
     if (user == null) return const SizedBox.shrink();
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.profile)),
+      appBar: AppBar(
+        leading: scaffoldKey != null
+            ? IconButton(
+                icon: const Icon(Icons.menu_rounded),
+                onPressed: () => scaffoldKey!.currentState?.openDrawer(),
+              )
+            : null,
+        title: Text(context.l10n.profile),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

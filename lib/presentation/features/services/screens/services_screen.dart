@@ -12,7 +12,9 @@ import '../../../features/auth/providers/auth_provider.dart';
 import '../providers/services_provider.dart';
 
 class ServicesScreen extends ConsumerWidget {
-  const ServicesScreen({super.key});
+  const ServicesScreen({super.key, this.scaffoldKey});
+
+  final GlobalKey<ScaffoldState>? scaffoldKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,6 +25,12 @@ class ServicesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: scaffoldKey != null
+            ? IconButton(
+                icon: const Icon(Icons.menu_rounded),
+                onPressed: () => scaffoldKey!.currentState?.openDrawer(),
+              )
+            : null,
         title: Text(context.l10n.myServices),
         actions: [
           IconButton(

@@ -348,8 +348,8 @@ class _SelectServiceStep extends ConsumerWidget {
                       ),
                 ),
                 const SizedBox(height: 12),
-                _ServiceListPicker(
-                  spId: selectedBusiness!.ownerId,
+                _BusinessServiceListPicker(
+                  businessId: selectedBusiness!.id,
                   selected: selectedService,
                   onSelected: onServiceSelected,
                 ),
@@ -453,6 +453,134 @@ class _ServiceListPicker extends ConsumerWidget {
           );
         }).toList(),
       ),
+    );
+  }
+}
+
+// ─── Business-wide service picker (uses GET /businesses/:id/services) ─────────
+
+class _BusinessServiceListPicker extends ConsumerWidget {
+  const _BusinessServiceListPicker({
+    required this.businessId,
+    required this.selected,
+    required this.onSelected,
+  });
+
+  final String businessId;
+  final ServiceEntity? selected;
+  final ValueChanged<ServiceEntity> onSelected;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final servicesAsync = ref.watch(businessServicesProvider(businessId));
+    return servicesAsync.when(
+      loading: () => const AppLoading(),
+      error: (e, _) => Text(e.toString()),
+      data: (rawList) {
+        // Parse raw maps into ServiceEntity objects
+        final services = rawList.map((raw) {
+          final spRaw = raw['serviceProviderId'];
+          final spId = (spRaw is Map ? spRaw['_id'] : spRaw) as String? ?? '';
+          final userRaw = spRaw is Map ? spRaw['userId'] : null;
+          final spName = userRaw is Map
+              ? '${userRaw['firstName'] ?? ''} ${userRaw['lastName'] ?? ''}'.trim()
+              : '';
+          return (
+            entity: ServiceEntity(
+              id: raw['_id'] as String? ?? '',
+              serviceProviderId: spId,
+              businessId: raw['businessId'] as String? ?? businessId,
+              name: raw['name'] as String? ?? '',
+              durationMinutes: (raw['durationMinutes'] as num?)?.toInt() ?? 0,
+              price: (raw['price'] as num?)?.toDouble() ?? 0,
+              isActive: raw['isActive'] as bool? ?? true,
+            ),
+            spName: spName,
+          );
+        }).toList();
+
+        return Column(
+          children: services.map((item) {
+            final s = item.entity;
+            final isSelected = selected?.id == s.id;
+            return GestureDetector(
+              onTap: () => onSelected(s),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isSelected ? AppColors.primary : AppColors.border,
+                    width: isSelected ? 2 : 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? AppColors.primary.withOpacity(0.12)
+                            : AppColors.surfaceVariant,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        Icons.design_services_rounded,
+                        color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                        size: 22,
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            s.name,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  color: AppColors.textPrimary,
+                                ),
+                          ),
+                          if (item.spName.isNotEmpty)
+                            Text(
+                              item.spName,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: AppColors.textSecondary,
+                                  ),
+                            ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              _SmallPill(
+                                label: AppFormatters.formatCurrency(s.price),
+                                color: AppColors.successLight,
+                                textColor: AppColors.successDark,
+                              ),
+                              const SizedBox(width: 6),
+                              _SmallPill(
+                                label: AppFormatters.formatDuration(s.durationMinutes),
+                                color: AppColors.surfaceVariant,
+                                textColor: AppColors.textSecondary,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (isSelected)
+                      const Icon(Icons.check_circle_rounded,
+                          color: AppColors.primary, size: 22),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+        );
+      },
     );
   }
 }

@@ -10,7 +10,9 @@ import '../../../features/auth/providers/auth_provider.dart';
 import '../providers/business_provider.dart';
 
 class BusinessScreen extends ConsumerWidget {
-  const BusinessScreen({super.key});
+  const BusinessScreen({super.key, this.scaffoldKey});
+
+  final GlobalKey<ScaffoldState>? scaffoldKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,15 +20,17 @@ class BusinessScreen extends ConsumerWidget {
     if (user == null) return const AppLoading();
 
     // For CO: show all businesses list
-    if (user.isCompanyOwner) return const _AdminBusinessList();
+    if (user.isCompanyOwner) return _AdminBusinessList(scaffoldKey: scaffoldKey);
 
     // For BO: show own business management
-    return const _OwnerBusinessPanel();
+    return _OwnerBusinessPanel(scaffoldKey: scaffoldKey);
   }
 }
 
 class _OwnerBusinessPanel extends ConsumerWidget {
-  const _OwnerBusinessPanel();
+  const _OwnerBusinessPanel({this.scaffoldKey});
+
+  final GlobalKey<ScaffoldState>? scaffoldKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,7 +38,15 @@ class _OwnerBusinessPanel extends ConsumerWidget {
     final businessAsync = ref.watch(businessProvider(user.id));
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.business)),
+      appBar: AppBar(
+        leading: scaffoldKey != null
+            ? IconButton(
+                icon: const Icon(Icons.menu_rounded),
+                onPressed: () => scaffoldKey!.currentState?.openDrawer(),
+              )
+            : null,
+        title: Text(context.l10n.business),
+      ),
       body: businessAsync.when(
         loading: () => const AppLoading(),
         error: (e, _) => AppErrorWidget(message: e.toString()),
@@ -88,7 +100,7 @@ class _OwnerBusinessPanel extends ConsumerWidget {
             _ActionTile(
               icon: Icons.people_outline,
               label: context.l10n.clients,
-              onTap: () => context.push('/business/clients'),
+              onTap: () => context.push('/business/clients/${business.id}'),
             ),
             _ActionTile(
               icon: Icons.engineering_outlined,
@@ -108,14 +120,24 @@ class _OwnerBusinessPanel extends ConsumerWidget {
 }
 
 class _AdminBusinessList extends ConsumerWidget {
-  const _AdminBusinessList();
+  const _AdminBusinessList({this.scaffoldKey});
+
+  final GlobalKey<ScaffoldState>? scaffoldKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final businessesAsync = ref.watch(businessesListProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.allBusinesses)),
+      appBar: AppBar(
+        leading: scaffoldKey != null
+            ? IconButton(
+                icon: const Icon(Icons.menu_rounded),
+                onPressed: () => scaffoldKey!.currentState?.openDrawer(),
+              )
+            : null,
+        title: Text(context.l10n.allBusinesses),
+      ),
       body: businessesAsync.when(
         loading: () => const AppLoading(),
         error: (e, _) => AppErrorWidget(message: e.toString()),

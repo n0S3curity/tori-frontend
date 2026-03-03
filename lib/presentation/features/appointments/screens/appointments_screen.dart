@@ -11,7 +11,9 @@ import '../../../common/widgets/status_chip.dart';
 import '../providers/appointments_provider.dart';
 
 class AppointmentsScreen extends ConsumerWidget {
-  const AppointmentsScreen({super.key});
+  const AppointmentsScreen({super.key, this.scaffoldKey});
+
+  final GlobalKey<ScaffoldState>? scaffoldKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,6 +21,12 @@ class AppointmentsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: scaffoldKey != null
+            ? IconButton(
+                icon: const Icon(Icons.menu_rounded),
+                onPressed: () => scaffoldKey!.currentState?.openDrawer(),
+              )
+            : null,
         title: Text(context.l10n.myAppointments),
         actions: [
           IconButton(

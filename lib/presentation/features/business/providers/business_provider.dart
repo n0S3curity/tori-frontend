@@ -96,3 +96,31 @@ final businessProvider = FutureProviderFamily<BusinessEntity, String>((ref, id) 
   final result = await repo.getBusiness(id);
   return result.fold((f) => throw f, (b) => b);
 });
+
+// Approved clients for a business
+final approvedClientsProvider =
+    FutureProvider.family<List<UserEntity>, String>((ref, businessId) async {
+  final ds = ref.read(businessesRemoteDsProvider);
+  final models = await ds.listApprovedClients(businessId);
+  return models
+      .map((m) => UserEntity(
+            id: m.id,
+            firstName: m.firstName,
+            lastName: m.lastName,
+            email: m.email,
+            phone: m.phone,
+            phoneVerified: m.phoneVerified,
+            profileImage: m.profileImage,
+            role: m.role,
+            language: m.language,
+            isDisabled: m.isDisabled,
+          ))
+      .toList();
+});
+
+// All services from all SPs in a business (aggregated)
+final businessServicesProvider =
+    FutureProvider.family<List<Map<String, dynamic>>, String>((ref, businessId) async {
+  final ds = ref.read(businessesRemoteDsProvider);
+  return ds.listBusinessServices(businessId);
+});
