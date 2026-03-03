@@ -14,11 +14,16 @@ import 'presentation/features/appointments/screens/appointments_screen.dart';
 import 'presentation/features/appointments/screens/book_appointment_screen.dart';
 import 'presentation/features/home/screens/home_screen.dart';
 import 'presentation/features/services/screens/services_screen.dart';
+import 'presentation/features/services/screens/create_service_screen.dart';
 import 'presentation/features/stats/screens/stats_screen.dart';
 import 'presentation/features/business/screens/business_screen.dart';
 import 'presentation/features/business/screens/clients_screen.dart';
+import 'presentation/features/business/screens/service_providers_screen.dart';
+import 'presentation/features/business/screens/admin_business_detail_screen.dart';
 import 'presentation/features/appointments/screens/appointment_detail_screen.dart';
 import 'presentation/features/profile/screens/profile_screen.dart';
+import 'presentation/features/profile/screens/edit_profile_screen.dart';
+import 'domain/entities/service_entity.dart';
 
 // ---------------------------------------------------------------------------
 // Router
@@ -99,12 +104,13 @@ final _routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: 'create',
-                builder: (_, __) => const _ComingSoon(title: 'Create Service'),
+                builder: (_, __) => const CreateServiceScreen(),
               ),
               GoRoute(
                 path: ':serviceId',
-                builder: (_, state) =>
-                    _ComingSoon(title: 'Service ${state.pathParameters['serviceId']}'),
+                builder: (_, state) => CreateServiceScreen(
+                  service: state.extra as ServiceEntity?,
+                ),
               ),
             ],
           ),
@@ -118,7 +124,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/business/service-providers',
-            builder: (_, __) => const _ComingSoon(title: 'Service Providers'),
+            builder: (_, __) => const ServiceProvidersScreen(),
           ),
           GoRoute(
             path: '/business/settings',
@@ -126,9 +132,14 @@ final _routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
           GoRoute(
+            path: '/profile/edit',
+            builder: (_, __) => const EditProfileScreen(),
+          ),
+          GoRoute(
             path: '/admin/businesses/:businessId',
-            builder: (_, state) =>
-                _ComingSoon(title: 'Business ${state.pathParameters['businessId']}'),
+            builder: (_, state) => AdminBusinessDetailScreen(
+              businessId: state.pathParameters['businessId']!,
+            ),
           ),
         ],
       ),

@@ -40,6 +40,15 @@ class AuthRemoteDataSource {
     );
   }
 
+  Future<UserModel> updateProfile(Map<String, dynamic> data) async {
+    final response =
+        await _client.put<Map<String, dynamic>>('/users/me', data: data);
+    return UserModel.fromJson(
+      (response.data!['data'] as Map<String, dynamic>)['user']
+          as Map<String, dynamic>,
+    );
+  }
+
   Future<void> logout() => _client.post<void>('/auth/logout');
 
   Future<String> refresh() async {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../features/auth/providers/auth_provider.dart';
@@ -96,6 +97,14 @@ class ProfileScreen extends ConsumerWidget {
                 : null,
           ),
 
+          // Edit profile
+          ListTile(
+            leading: const Icon(Icons.edit_outlined),
+            title: Text(context.l10n.editProfile),
+            trailing: const Icon(Icons.chevron_right, size: 18, color: AppColors.textHint),
+            onTap: () => context.push('/profile/edit'),
+          ),
+
           const Divider(),
           const SizedBox(height: 8),
 
@@ -109,7 +118,7 @@ class ProfileScreen extends ConsumerWidget {
             onTap: () async {
               final confirmed = await context.showConfirmDialog(
                 title: context.l10n.logout,
-                body: 'Are you sure you want to log out?',
+                body: context.l10n.logoutConfirm,
                 isDestructive: true,
               );
               if (confirmed == true) {

@@ -175,5 +175,10 @@
   "manageProviders": "צפה ונהל את הצוות שלך",
   "manageBusinessSettings": "ערוך שם, לוגו ותזכורות",
   "completedLabel": "הושלם",
-  "canceledLabel": "בוטל"
+  "canceledLabel": "בוטל",
+  "editProfile": "ערוך פרופיל",
+  "deactivate": "השבת",
+  "activate": "הפעל",
+  "businessInfo": "פרטי עסק",
+  "adminActions": "פעולות ניהול"
 }

@@ -1087,6 +1087,36 @@ abstract class AppLocalizations {
   /// In he, this message translates to:
   /// **'בוטל'**
   String get canceledLabel;
+
+  /// No description provided for @editProfile.
+  ///
+  /// In he, this message translates to:
+  /// **'ערוך פרופיל'**
+  String get editProfile;
+
+  /// No description provided for @deactivate.
+  ///
+  /// In he, this message translates to:
+  /// **'השבת'**
+  String get deactivate;
+
+  /// No description provided for @activate.
+  ///
+  /// In he, this message translates to:
+  /// **'הפעל'**
+  String get activate;
+
+  /// No description provided for @businessInfo.
+  ///
+  /// In he, this message translates to:
+  /// **'פרטי עסק'**
+  String get businessInfo;
+
+  /// No description provided for @adminActions.
+  ///
+  /// In he, this message translates to:
+  /// **'פעולות ניהול'**
+  String get adminActions;
 }
 
 class _AppLocalizationsDelegate

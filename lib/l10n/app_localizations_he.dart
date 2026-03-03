@@ -508,4 +508,19 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get canceledLabel => 'בוטל';
+
+  @override
+  String get editProfile => 'ערוך פרופיל';
+
+  @override
+  String get deactivate => 'השבת';
+
+  @override
+  String get activate => 'הפעל';
+
+  @override
+  String get businessInfo => 'פרטי עסק';
+
+  @override
+  String get adminActions => 'פעולות ניהול';
 }

@@ -175,5 +175,10 @@
   "manageProviders": "View and manage your team",
   "manageBusinessSettings": "Edit name, logo and reminders",
   "completedLabel": "Completed",
-  "canceledLabel": "Canceled"
+  "canceledLabel": "Canceled",
+  "editProfile": "Edit Profile",
+  "deactivate": "Deactivate",
+  "activate": "Activate",
+  "businessInfo": "Business Information",
+  "adminActions": "Admin Actions"
 }

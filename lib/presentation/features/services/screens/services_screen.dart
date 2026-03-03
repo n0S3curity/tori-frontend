@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../../data/repositories/services_repository_impl.dart';
 import '../../../../domain/entities/service_entity.dart';
 import '../../../common/widgets/app_error_widget.dart';
 import '../../../common/widgets/app_loading.dart';
@@ -55,12 +56,62 @@ class ServicesScreen extends ConsumerWidget {
                 padding: const EdgeInsets.all(16),
                 itemCount: services.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 8),
-                itemBuilder: (ctx, i) => _ServiceCard(service: services[i]),
+                itemBuilder: (ctx, i) => _DismissibleServiceCard(
+                  key: ValueKey(services[i].id),
+                  service: services[i],
+                  spId: user.id,
+                  onDeleted: () => ref.invalidate(servicesProvider(user.id)),
+                ),
               ),
       ),
     );
   }
 }
+
+// ── Dismissible card (has Riverpod access via ConsumerWidget) ─────────────────
+
+class _DismissibleServiceCard extends ConsumerWidget {
+  const _DismissibleServiceCard({
+    super.key,
+    required this.service,
+    required this.spId,
+    required this.onDeleted,
+  });
+
+  final ServiceEntity service;
+  final String spId;
+  final VoidCallback onDeleted;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Dismissible(
+      key: ValueKey(service.id),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        alignment: AlignmentDirectional.centerEnd,
+        padding: const EdgeInsetsDirectional.only(end: 20),
+        decoration: BoxDecoration(
+          color: AppColors.error,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: const Icon(Icons.delete_outline, color: Colors.white),
+      ),
+      confirmDismiss: (_) => context.showConfirmDialog(
+        title: context.l10n.deleteConfirm,
+        body: context.l10n.deleteConfirmBody,
+        isDestructive: true,
+      ),
+      onDismissed: (_) async {
+        final repo = ref.read(servicesRepositoryProvider);
+        await repo.deleteService(spId, service.id);
+        onDeleted();
+      },
+      child: _ServiceCard(service: service),
+    );
+  }
+}
+
+// ── Service card ──────────────────────────────────────────────────────────────
 
 class _ServiceCard extends StatelessWidget {
   const _ServiceCard({required this.service});
@@ -71,14 +122,17 @@ class _ServiceCard extends StatelessWidget {
   Widget build(BuildContext context) => Card(
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () => context.push('/services/${service.id}'),
+          onTap: () => context.push('/services/${service.id}', extra: service),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
                 CircleAvatar(
                   backgroundColor: AppColors.primary.withOpacity(0.1),
-                  child: const Icon(Icons.design_services_rounded, color: AppColors.primary),
+                  child: const Icon(
+                    Icons.design_services_rounded,
+                    color: AppColors.primary,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -88,13 +142,17 @@ class _ServiceCard extends StatelessWidget {
                       Text(service.name, style: context.textTheme.titleMedium),
                       const SizedBox(height: 2),
                       Text(
-                        '${AppFormatters.formatCurrency(service.price)} · ${AppFormatters.formatDuration(service.durationMinutes)}',
+                        '${AppFormatters.formatCurrency(service.price)} · '
+                        '${AppFormatters.formatDuration(service.durationMinutes)}',
                         style: context.textTheme.bodySmall,
                       ),
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+                const Icon(
+                  Icons.chevron_right,
+                  color: AppColors.textSecondary,
+                ),
               ],
             ),
           ),

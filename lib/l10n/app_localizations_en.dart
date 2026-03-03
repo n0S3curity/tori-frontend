@@ -509,4 +509,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get canceledLabel => 'Canceled';
+
+  @override
+  String get editProfile => 'Edit Profile';
+
+  @override
+  String get deactivate => 'Deactivate';
+
+  @override
+  String get activate => 'Activate';
+
+  @override
+  String get businessInfo => 'Business Information';
+
+  @override
+  String get adminActions => 'Admin Actions';
 }

@@ -138,6 +138,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
     );
   }
 
+  Future<bool> updateProfile(Map<String, dynamic> data) async {
+    final currentState = state;
+    if (currentState is! AuthAuthenticated) return false;
+    final result = await _repository.updateProfile(data);
+    return result.fold(
+      (_) => false,
+      (updatedUser) {
+        state = AuthAuthenticated(updatedUser, currentState.token);
+        return true;
+      },
+    );
+  }
+
   Future<void> logout() async {
     state = const AuthLoading();
     await _repository.logout();

@@ -67,6 +67,18 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  Future<Either<Failure, UserEntity>> updateProfile(
+      Map<String, dynamic> data) async {
+    try {
+      final userModel = await _dataSource.updateProfile(data);
+      // Persist updated user to local cache
+      await _storage.saveUser(jsonEncode(userModel.toJson()));
+      return right(userModel.toEntity());
+    } on DioException catch (e) {
+      return left(e.error is Failure ? e.error as Failure : const Failure.unknown());
+    }
+  }
+
   @override
   Future<Either<Failure, Unit>> logout() async {
     try {
